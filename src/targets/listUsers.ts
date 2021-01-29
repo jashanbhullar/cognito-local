@@ -14,7 +14,11 @@ export interface DynamoDBUserRecord {
   UserCreateDate: number;
   UserLastModifiedDate: number;
   Enabled: boolean;
-  UserStatus: "CONFIRMED" | "UNCONFIRMED" | "RESET_REQUIRED";
+  UserStatus:
+    | "CONFIRMED"
+    | "UNCONFIRMED"
+    | "RESET_REQUIRED"
+    | "FORCE_CHANGE_PASSWORD";
   Attributes: readonly UserAttribute[];
 }
 

@@ -9,6 +9,7 @@ import { ListUsers } from "./listUsers";
 import { RespondToAuthChallenge } from "./respondToAuthChallenge";
 import { SignUp } from "./signUp";
 import { GetUser } from "./getUser";
+import { AdminCreateUser } from "./adminCreateUser";
 
 export const Targets = {
   ConfirmForgotPassword,
@@ -20,6 +21,7 @@ export const Targets = {
   RespondToAuthChallenge,
   SignUp,
   GetUser,
+  AdminCreateUser,
 };
 
 type TargetName = keyof typeof Targets;

@@ -1,6 +1,7 @@
 import log from "../log";
 import { AppClient, newId } from "./appClient";
 import { CreateDataStore, DataStore } from "./dataStore";
+import uuidv4 from "uuid/v4";
 
 export interface UserAttribute {
   Name: "sub" | "email" | "phone_number" | "preferred_username" | string;
@@ -42,7 +43,11 @@ export interface User {
   UserCreateDate: number;
   UserLastModifiedDate: number;
   Enabled: boolean;
-  UserStatus: "CONFIRMED" | "UNCONFIRMED" | "RESET_REQUIRED";
+  UserStatus:
+    | "CONFIRMED"
+    | "UNCONFIRMED"
+    | "RESET_REQUIRED"
+    | "FORCE_CHANGE_PASSWORD";
   Attributes: readonly UserAttribute[];
   MFAOptions?: readonly MFAOption[];
 
@@ -65,7 +70,7 @@ export interface UserPoolClient {
   createAppClient(name: string): Promise<AppClient>;
   getUserByUsername(username: string): Promise<User | null>;
   listUsers(): Promise<readonly User[]>;
-  saveUser(user: User): Promise<void>;
+  saveUser(user: User): Promise<User>;
 }
 
 export type CreateUserPoolClient = (
@@ -147,14 +152,18 @@ export const createUserPoolClient = async (
     async saveUser(user) {
       log.debug("saveUser", user);
 
+      const id = uuidv4();
       const attributes = attributesInclude("sub", user.Attributes)
         ? user.Attributes
-        : [{ Name: "sub", Value: user.Username }, ...user.Attributes];
+        : [{ Name: "sub", Value: id }, ...user.Attributes];
 
-      await dataStore.set<User>(`Users.${user.Username}`, {
+      const createUser = {
         ...user,
         Attributes: attributes,
-      });
+      };
+
+      await dataStore.set<User>(`Users.${id}`, createUser);
+      return createUser;
     },
   };
 };
