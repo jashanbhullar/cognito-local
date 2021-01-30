@@ -71,6 +71,7 @@ export interface UserPoolClient {
   getUserByUsername(username: string): Promise<User | null>;
   listUsers(): Promise<readonly User[]>;
   saveUser(user: User): Promise<User>;
+  updateUser(id: string, params: any): Promise<void>;
 }
 
 export type CreateUserPoolClient = (
@@ -164,6 +165,14 @@ export const createUserPoolClient = async (
 
       await dataStore.set<User>(`Users.${id}`, createUser);
       return createUser;
+    },
+
+    async updateUser(id, params) {
+      // const user = getUserByUsername(username);
+      for (const key in params) {
+        const updateKey = `Users.${id}.${key}`;
+        await dataStore.set<string>(updateKey, params[key]);
+      }
     },
   };
 };
